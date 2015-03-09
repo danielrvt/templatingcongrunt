@@ -78,7 +78,7 @@ module.exports = function (grunt) {
       },
       content: {
         files: ['app/content/{,*/}*.*'],
-        tasks: ['copy:content', 'usebanner', 'twigRender']
+        tasks: ['copy', 'usebanner', 'twigRender']
       },
       js: {
         files: ['<%= config.app %>/scripts/{,*/}*.js'],
