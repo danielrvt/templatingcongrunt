@@ -31,12 +31,12 @@ module.exports = function (grunt) {
     config: config,
 
     usebanner: {
-      taskName: {
+      blockopen: {
         options: {
           position: 'top',
           process: function (filepath) {
             return grunt.template.process(
-              "{% extends '<%= parentdir %>.twig' %}",
+              "{% extends '../../templates/sublayouts/<%= parentdir %>.twig' %}\n{% block content %}",
               {
                 data: {
                   parentdir: filepath.split('/').reverse()[1]
@@ -47,9 +47,18 @@ module.exports = function (grunt) {
         },
         files: [{
           expand: true,
-          src: ['app/build/{,**/}*.html']
+          src: ['.tmp/content/**/*.twig']
         }]
-
+      },
+      blockclosed: {
+        options: {
+          position: 'bottom',
+          banner: '{% endblock %}'
+        },
+        files: [{
+          expand: true,
+          src: ['.tmp/content/**/*.twig']
+        }]
       }
     },
 
@@ -59,9 +68,9 @@ module.exports = function (grunt) {
           {
             data: {},
             expand: true,
-            cwd: 'app',
+            cwd: '.tmp',
             src: ['**/*.twig', '!**/_*.twig'], // Match twig templates but not partials
-            dest: 'app/build',
+            dest: 'build',
             ext: '.html'   // index.twig + datafile.json => layout.html
           }
         ]
@@ -345,8 +354,9 @@ module.exports = function (grunt) {
       content: {
         expand: true,
         cwd: '<%= config.app %>',
-        dest: '<%= config.app %>/build',
-        src: ['content/{,*/}*.*']
+        dest: '.tmp/',
+        src: ['content/{,*/}*.*', 'templates/{,*/}*.*'],
+        ext: '.twig'
       },
       styles: {
         expand: true,
