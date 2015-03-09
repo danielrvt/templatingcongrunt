@@ -36,7 +36,7 @@ module.exports = function (grunt) {
           position: 'top',
           process: function (filepath) {
             return grunt.template.process(
-              '// banner for file: <%= parentdir %>',
+              "{% extends '<%= parentdir %>.twig' %}",
               {
                 data: {
                   parentdir: filepath.split('/').reverse()[1]
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
             cwd: 'app',
             src: ['**/*.twig', '!**/_*.twig'], // Match twig templates but not partials
             dest: 'app/build',
-            ext: '.html'   // index.twig + datafile.json => index.html
+            ext: '.html'   // index.twig + datafile.json => layout.html
           }
         ]
       }
@@ -125,7 +125,7 @@ module.exports = function (grunt) {
             return [
               connect.static('.tmp'),
               connect().use('/bower_components', connect.static('./bower_components')),
-              connect.static(config.app)
+              connect.static(config.app + '/build/templates/layout.html')
             ];
           }
         }
@@ -186,7 +186,7 @@ module.exports = function (grunt) {
       all: {
         options: {
           run: true,
-          urls: ['http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/index.html']
+          urls: ['http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/index.twig']
         }
       }
     },
@@ -210,7 +210,7 @@ module.exports = function (grunt) {
     wiredep: {
       app: {
         ignorePath: /^\/|\.\.\//,
-        src: ['<%= config.app %>/index.html']
+        src: ['<%= config.app %>/templates/layout.html']
       }
     },
 
@@ -236,7 +236,7 @@ module.exports = function (grunt) {
       options: {
         dest: '<%= config.dist %>'
       },
-      html: '<%= config.app %>/index.html'
+      html: '<%= config.app %>/templates/layout.html'
     },
 
     // Performs rewrites based on rev and the useminPrepare configuration
@@ -297,7 +297,7 @@ module.exports = function (grunt) {
       }
     },
 
-    // By default, your `index.html`'s <!-- Usemin block --> will take care
+    // By default, your `layout.html`'s <!-- Usemin block --> will take care
     // of minification. These next options are pre-configured if you do not
     // wish to use the Usemin blocks.
     // cssmin: {
